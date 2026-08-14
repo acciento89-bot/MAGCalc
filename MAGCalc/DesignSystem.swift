@@ -30,6 +30,73 @@ enum AppTheme {
     )
 }
 
+struct ExpansionVesselIcon: View {
+    var size: CGFloat = 52
+    var showsBadge = false
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: size * 0.24, style: .continuous)
+                .fill(AppTheme.accent.opacity(0.12))
+
+            VStack(spacing: 0) {
+                Capsule()
+                    .fill(Color.white.opacity(0.72))
+                    .frame(width: size * 0.15, height: size * 0.11)
+                    .offset(y: size * 0.035)
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(red: 0.88, green: 0.20, blue: 0.18), Color(red: 0.62, green: 0.08, blue: 0.08)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .overlay {
+                            RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
+                                .stroke(Color.white.opacity(0.20), lineWidth: 1)
+                        }
+
+                    Rectangle()
+                        .fill(Color.white.opacity(0.72))
+                        .frame(height: max(1.5, size * 0.025))
+                        .padding(.horizontal, size * 0.10)
+
+                    Capsule()
+                        .fill(Color.white.opacity(0.20))
+                        .frame(width: size * 0.07, height: size * 0.31)
+                        .offset(x: -size * 0.12, y: -size * 0.02)
+                }
+                .frame(width: size * 0.48, height: size * 0.59)
+
+                HStack(spacing: size * 0.14) {
+                    Capsule().fill(Color.white.opacity(0.62))
+                    Capsule().fill(Color.white.opacity(0.62))
+                }
+                .frame(width: size * 0.34, height: size * 0.09)
+                .offset(y: -size * 0.015)
+            }
+            .offset(y: size * 0.01)
+
+            if showsBadge {
+                Circle()
+                    .fill(AppTheme.accentGradient)
+                    .frame(width: size * 0.28, height: size * 0.28)
+                    .overlay {
+                        Image(systemName: "gauge.with.dots.needle.67percent")
+                            .font(.system(size: size * 0.13, weight: .bold))
+                            .foregroundStyle(.black.opacity(0.78))
+                    }
+                    .offset(x: size * 0.29, y: -size * 0.29)
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+}
+
 struct CalculatorScreen<Content: View>: View {
     let title: LocalizedStringKey
     let subtitle: LocalizedStringKey
