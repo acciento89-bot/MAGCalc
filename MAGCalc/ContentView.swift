@@ -17,8 +17,7 @@ struct ContentView: View {
                         NavigationLink {
                             HeatingMAGView()
                         } label: {
-                            HomeCard(
-                                icon: "cylinder.fill",
+                            VesselHomeCard(
                                 title: "home.heating.title",
                                 subtitle: "home.heating.subtitle",
                                 badge: "home.free.badge",
@@ -101,15 +100,7 @@ struct ContentView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(AppTheme.accentGradient)
-                        .frame(width: 62, height: 62)
-
-                    Image(systemName: "cylinder.fill")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(Color.black.opacity(0.78))
-                }
+                ExpansionVesselIcon(size: 66, showsBadge: true)
 
                 Spacer()
 
@@ -131,6 +122,47 @@ struct ContentView: View {
                 .lineSpacing(3)
         }
         .padding(.bottom, 4)
+    }
+}
+
+private struct VesselHomeCard: View {
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+    let badge: LocalizedStringKey
+    let locked: Bool
+
+    var body: some View {
+        HStack(spacing: 16) {
+            ExpansionVesselIcon(size: 48)
+
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(spacing: 8) {
+                    Text(title)
+                        .font(.headline)
+                    Text(badge)
+                        .font(.caption2.bold())
+                        .foregroundStyle(locked ? AppTheme.muted : AppTheme.accent)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(Color.white.opacity(0.06), in: Capsule())
+                }
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.muted)
+                    .multilineTextAlignment(.leading)
+            }
+
+            Spacer()
+
+            Image(systemName: locked ? "lock.fill" : "chevron.right")
+                .foregroundStyle(AppTheme.muted)
+        }
+        .padding(18)
+        .background(AppTheme.cardGradient, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(AppTheme.line, lineWidth: 1)
+        }
     }
 }
 
