@@ -1,0 +1,74 @@
+"common.done" = "Fertig";
+
+"home.title" = "Ausdehnungsgefäße schnell berechnen";
+"home.subtitle" = "MAG-Größe, Vordruck und Fülldruck direkt auf der Baustelle oder im Kundendienst abschätzen.";
+"home.heating.title" = "Heizungs-MAG";
+"home.heating.subtitle" = "Gefäßgröße für wassergeführte Heizungsanlagen.";
+"home.pressure.title" = "Druck-Assistent";
+"home.pressure.subtitle" = "Statische Höhe in Vordruck und Fülldruck umrechnen.";
+"home.advanced.title" = "Sondermedien & Solar";
+"home.advanced.subtitle" = "Manuelle Ausdehnung für Glykol, Solar und Sonderfälle.";
+"home.free.badge" = "FREE";
+"home.pro.badge" = "PRO";
+"home.disclaimer" = "Rechenhilfe für Fachkräfte. Herstellerangaben, geltende Normen, Sicherheitsbauteile und Messwerte der realen Anlage haben immer Vorrang.";
+
+"heating.title" = "Heizungs-MAG";
+"heating.subtitle" = "Schnelle Dimensionierung für Wasser als Anlagenmedium.";
+"heating.formulaNote" = "Die Wasserausdehnung wird aus einer Dichtetabelle ab 10 °C angenähert. Vordruck, Fülldruck und Druckreserve sind praxisorientierte Rechenwerte und müssen an die reale Anlage angepasst werden.";
+
+"pressure.title" = "Druck-Assistent";
+"pressure.subtitle" = "Statische Höhe und Sicherheitsventil als schnelle Druckkontrolle.";
+"pressure.formulaNote" = "Faustwert: 10 m statische Höhe entsprechen etwa 1 bar. Der vorgeschlagene Vordruck liegt 0,2 bar über dem statischen Druck, der Fülldruck nochmals 0,3 bar darüber.";
+
+"advanced.title" = "Sondermedien & Solar";
+"advanced.subtitle" = "MAG-Berechnung mit frei vorgegebener Volumenausdehnung.";
+"advanced.formulaNote" = "Für Glykol, Solarflüssigkeiten und Sondermedien die Volumenausdehnung aus den Herstellerdaten übernehmen. Bei Solaranlagen müssen zusätzlich Kollektor-, Dampf- und Stagnationsbedingungen separat berücksichtigt werden.";
+"advanced.invalid" = "Bitte prüfen: Anlagenvolumen und Ausdehnung müssen größer als 0 sein und der Enddruck muss über dem Vordruck liegen.";
+
+"input.systemVolume" = "Anlagenvolumen";
+"input.maximumTemperature" = "Max. Temperatur";
+"input.staticHeight" = "Statische Höhe";
+"input.safetyValve" = "Sicherheitsventil";
+"input.expansionPercent" = "Volumenausdehnung";
+"input.precharge" = "Vordruck p₀";
+"input.finalPressure" = "Enddruck";
+"input.reservePercent" = "Wasserreserve";
+
+"result.recommendedVessel" = "Nächste Gefäßgröße";
+"result.requiredVessel" = "Erforderliches Volumen";
+"result.waterExpansion" = "Wasserausdehnung";
+"result.expansionVolume" = "Ausdehnungsvolumen";
+"result.reserveVolume" = "Reservevolumen";
+"result.expansionPercent" = "Ausdehnung";
+"result.staticPressure" = "Statischer Druck";
+"result.precharge" = "Empf. Vordruck";
+"result.fillPressure" = "Empf. Fülldruck";
+"result.maxOperatingPressure" = "Empf. max. Druck";
+
+"error.pressureWindow" = "Die eingegebenen Druckwerte lassen kein sinnvolles Arbeitsfenster zu. Statische Höhe, Sicherheitsventil und Druckvorgaben prüfen.";
+
+"pro.subtitle" = "Erweiterte MAG-Berechnung dauerhaft freischalten.";
+"pro.feature.custom" = "Freie Volumenausdehnung für Sondermedien";
+"pro.feature.solar" = "Auslegungshilfe für Solar-Sonderfälle";
+"pro.feature.glycol" = "Für Glykol mit Herstellerwerten nutzbar";
+"pro.feature.once" = "Einmal kaufen, dauerhaft freigeschaltet";
+"pro.buy" = "Pro freischalten";
+"pro.restore" = "Käufe wiederherstellen";
+"pro.note" = "Einmaliger In-App-Kauf. Kein Abo.";
+
+"store.unavailable" = "Der In-App-Kauf ist derzeit nicht verfügbar.";
+"store.verificationFailed" = "Der Kauf konnte nicht verifiziert werden.";
+"store.pending" = "Der Kauf wartet noch auf Bestätigung.";
+
+"settings.title" = "Einstellungen";
+"settings.proStatus" = "Pro-Status";
+"settings.proActive" = "Aktiv";
+"settings.free" = "Free";
+"settings.unlockPro" = "MAGCalc Pro freischalten";
+"settings.links" = "Links";
+"settings.support" = "Support";
+"settings.privacy" = "Datenschutz";
+"settings.about" = "Über MAGCalc";
+"settings.version" = "Version";
+"settings.developer" = "Entwickler";
+"settings.disclaimer" = "MAGCalc ersetzt keine fachgerechte Planung, Herstellerunterlagen oder die Prüfung nach den für die Anlage geltenden Regeln.";

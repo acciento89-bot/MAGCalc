@@ -1,0 +1,74 @@
+"common.done" = "Done";
+
+"home.title" = "Size expansion vessels quickly";
+"home.subtitle" = "Estimate vessel size, pre-charge and fill pressure directly on site or during service.";
+"home.heating.title" = "Heating vessel";
+"home.heating.subtitle" = "Vessel sizing for water-based heating systems.";
+"home.pressure.title" = "Pressure assistant";
+"home.pressure.subtitle" = "Convert static height into pre-charge and fill pressure.";
+"home.advanced.title" = "Special fluids & solar";
+"home.advanced.subtitle" = "Manual expansion input for glycol, solar and special cases.";
+"home.free.badge" = "FREE";
+"home.pro.badge" = "PRO";
+"home.disclaimer" = "Calculation aid for trained professionals. Manufacturer data, applicable standards, safety components and actual system measurements always take precedence.";
+
+"heating.title" = "Heating vessel";
+"heating.subtitle" = "Quick sizing for water as the system fluid.";
+"heating.formulaNote" = "Water expansion is approximated from a density table starting at 10 °C. Pre-charge, fill pressure and pressure margins are practical calculation values and must be adapted to the real system.";
+
+"pressure.title" = "Pressure assistant";
+"pressure.subtitle" = "Quick pressure check from static height and safety valve setting.";
+"pressure.formulaNote" = "Rule of thumb: 10 m static height is approximately 1 bar. Suggested pre-charge is 0.2 bar above static pressure, with fill pressure another 0.3 bar higher.";
+
+"advanced.title" = "Special fluids & solar";
+"advanced.subtitle" = "Vessel sizing with a freely specified volumetric expansion.";
+"advanced.formulaNote" = "For glycol, solar fluids and special media, enter volumetric expansion from manufacturer data. Solar systems also require separate consideration of collector, vapour and stagnation conditions.";
+"advanced.invalid" = "Please check the inputs: system volume and expansion must be above 0 and final pressure must exceed pre-charge.";
+
+"input.systemVolume" = "System volume";
+"input.maximumTemperature" = "Max. temperature";
+"input.staticHeight" = "Static height";
+"input.safetyValve" = "Safety valve";
+"input.expansionPercent" = "Volume expansion";
+"input.precharge" = "Pre-charge p₀";
+"input.finalPressure" = "Final pressure";
+"input.reservePercent" = "Water reserve";
+
+"result.recommendedVessel" = "Next vessel size";
+"result.requiredVessel" = "Required volume";
+"result.waterExpansion" = "Water expansion";
+"result.expansionVolume" = "Expansion volume";
+"result.reserveVolume" = "Reserve volume";
+"result.expansionPercent" = "Expansion";
+"result.staticPressure" = "Static pressure";
+"result.precharge" = "Suggested pre-charge";
+"result.fillPressure" = "Suggested fill pressure";
+"result.maxOperatingPressure" = "Suggested max pressure";
+
+"error.pressureWindow" = "The entered pressure values do not provide a usable operating window. Check static height, safety valve and pressure settings.";
+
+"pro.subtitle" = "Permanently unlock advanced expansion-vessel sizing.";
+"pro.feature.custom" = "Custom volumetric expansion for special fluids";
+"pro.feature.solar" = "Sizing aid for solar special cases";
+"pro.feature.glycol" = "Usable for glycol with manufacturer data";
+"pro.feature.once" = "One-time purchase, permanently unlocked";
+"pro.buy" = "Unlock Pro";
+"pro.restore" = "Restore purchases";
+"pro.note" = "One-time In-App Purchase. No subscription.";
+
+"store.unavailable" = "The In-App Purchase is currently unavailable.";
+"store.verificationFailed" = "The purchase could not be verified.";
+"store.pending" = "The purchase is still pending.";
+
+"settings.title" = "Settings";
+"settings.proStatus" = "Pro status";
+"settings.proActive" = "Active";
+"settings.free" = "Free";
+"settings.unlockPro" = "Unlock MAGCalc Pro";
+"settings.links" = "Links";
+"settings.support" = "Support";
+"settings.privacy" = "Privacy";
+"settings.about" = "About MAGCalc";
+"settings.version" = "Version";
+"settings.developer" = "Developer";
+"settings.disclaimer" = "MAGCalc does not replace professional design, manufacturer documentation or checks required by the rules applicable to the system.";

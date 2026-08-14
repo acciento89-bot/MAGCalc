@@ -1,0 +1,22 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build MAGCalc
+        run: |
+          xcodebuild \
+            -project MAGCalc.xcodeproj \
+            -scheme MAGCalc \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
