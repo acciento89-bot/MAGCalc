@@ -10,11 +10,7 @@ struct ProPaywallView: View {
 
             ScrollView {
                 VStack(spacing: 22) {
-                    Image(systemName: "cylinder.fill")
-                        .font(.system(size: 48, weight: .bold))
-                        .foregroundStyle(AppTheme.accent)
-                        .frame(width: 92, height: 92)
-                        .background(AppTheme.accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 28))
+                    ExpansionVesselIcon(size: 92, showsBadge: true)
 
                     VStack(spacing: 8) {
                         Text("MAGCalc Pro")
@@ -77,6 +73,17 @@ struct ProPaywallView: View {
         }
         .navigationTitle("MAGCalc Pro")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .fontWeight(.semibold)
+                }
+                .accessibilityLabel("Close")
+            }
+        }
     }
 }
 
