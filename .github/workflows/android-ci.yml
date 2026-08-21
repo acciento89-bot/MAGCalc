@@ -49,7 +49,9 @@ jobs:
           grep -q 'versionCode = 2' android/app/build.gradle.kts
           grep -q 'versionName = "1.0.1"' android/app/build.gradle.kts
           grep -q 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          test -f android/app/src/main/res/mipmap-nodpi/ic_launcher.png
+          grep -q 'generateLauncherIcon' android/app/build.gradle.kts
+          test -f android/app/build/generated/launcherIcon/res/mipmap-nodpi/ic_launcher.png
+          test -f android/app/build/generated/launcherIcon/res/drawable-nodpi/app_icon_source.png
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4

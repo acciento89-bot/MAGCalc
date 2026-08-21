@@ -3,6 +3,34 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val generatedIconResDir = layout.buildDirectory.dir("generated/launcherIcon/res").get().asFile
+val generateLauncherIcon by tasks.registering {
+    val sourceIcon = rootProject.file("../MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png")
+    inputs.file(sourceIcon)
+    outputs.dir(generatedIconResDir)
+    doLast {
+        if (!sourceIcon.isFile) throw GradleException("Canonical MAGCalc AppIcon is missing: ${sourceIcon.path}")
+        val source = javax.imageio.ImageIO.read(sourceIcon)
+            ?: throw GradleException("Canonical MAGCalc AppIcon could not be decoded")
+        val normalized = java.awt.image.BufferedImage(source.width, source.height, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+        val graphics = normalized.createGraphics()
+        try {
+            graphics.drawImage(source, 0, 0, null)
+        } finally {
+            graphics.dispose()
+        }
+        listOf(
+            generatedIconResDir.resolve("drawable-nodpi/app_icon_source.png"),
+            generatedIconResDir.resolve("mipmap-nodpi/ic_launcher.png"),
+        ).forEach { output ->
+            output.parentFile.mkdirs()
+            if (!javax.imageio.ImageIO.write(normalized, "png", output)) {
+                throw GradleException("Could not encode normalized MAGCalc launcher icon")
+            }
+        }
+    }
+}
+
 android {
     namespace = "de.kamilunavo.magcalc"
     compileSdk = 36
@@ -16,6 +44,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    sourceSets.getByName("main").res.srcDir(generatedIconResDir)
     buildFeatures { compose = true }
 
     compileOptions {
@@ -29,6 +58,10 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(generateLauncherIcon)
 }
 
 dependencies {
