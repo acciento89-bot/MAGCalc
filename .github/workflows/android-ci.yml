@@ -41,13 +41,20 @@ jobs:
         run: gradle -p android bundleDebug --stacktrace
       - name: Build unsigned release App Bundle
         run: gradle -p android bundleRelease --stacktrace
-      - name: Verify release identity
+      - name: Verify release identity and launcher icon
         run: |
-          test -f android/app/build/outputs/bundle/release/app-release.aab
-          grep -q 'applicationId = "de.kamilunavo.magcalc"' android/app/build.gradle.kts
-          grep -q 'targetSdk = 36' android/app/build.gradle.kts
-          grep -q 'versionCode = 1' android/app/build.gradle.kts
-          grep -q 'versionName = "1.0.0"' android/app/build.gradle.kts
+          set -euo pipefail
+          AAB='android/app/build/outputs/bundle/release/app-release.aab'
+          test -s "$AAB"
+          grep -Fq 'applicationId = "de.kamilunavo.magcalc"' android/app/build.gradle.kts
+          grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 2' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.1"' android/app/build.gradle.kts
+          grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/res/drawable/app_icon_source.xml
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          grep -Fq '@drawable/app_icon_source' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          ! grep -Fq 'generateLauncherIcon' android/app/build.gradle.kts
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
