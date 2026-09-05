@@ -48,8 +48,8 @@ jobs:
           test -s "$AAB"
           grep -Fq 'applicationId = "de.kamilunavo.magcalc"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 2' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.1"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 3' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.2"' android/app/build.gradle.kts
           grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
           test -f android/app/src/main/res/drawable/app_icon_source.xml
           test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
