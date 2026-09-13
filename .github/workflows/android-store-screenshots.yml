@@ -44,7 +44,7 @@ jobs:
           profile: pixel_7
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
-          script: PACKAGE_NAME='de.kamilunavo.magcalc' WAIT_TEXT='MAGCalc' SECOND_ACTION='dark' SECOND_TEXT='' OUTPUT_DIR='store/google-play/screenshots/de-DE' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
+          script: PACKAGE_NAME='de.kamilunavo.magcalc' WAIT_TEXT='MAGCalc' SECOND_ACTION='swipe' SECOND_TEXT='' OUTPUT_DIR='store/google-play/screenshots/de-DE' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
 
       - name: Upload authentic screenshots
         uses: actions/upload-artifact@v4
@@ -65,4 +65,3 @@ jobs:
             git commit -m 'Store authentic MAGCalc Android screenshots'
             git push origin HEAD:main
           fi
-
