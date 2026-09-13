@@ -40,6 +40,26 @@ assert_no_system_dialog() {
   fi
 }
 
+stabilize_launcher() {
+  local attempt
+  local focus
+  adb shell input keyevent KEYCODE_HOME
+  for attempt in $(seq 1 30); do
+    focus="$(current_focus)"
+    if [[ "$focus" == *"Application Not Responding"* ]]; then
+      adb shell am force-stop com.android.launcher3
+      adb shell input keyevent KEYCODE_HOME
+    elif [[ "$focus" == *"com.android.launcher3"* ]] && dump_ui >/dev/null; then
+      assert_no_system_dialog
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for a responsive Android launcher." >&2
+  current_focus >&2
+  return 1
+}
+
 wait_for_foreground() {
   local attempt
   local focus
@@ -120,6 +140,7 @@ rm -f "$output_dir"/*.png
 adb install -r "$apk_path"
 adb shell settings put global hide_error_dialogs 1
 adb shell cmd locale set-app-locales "$PACKAGE_NAME" --user 0 de-DE
+stabilize_launcher
 launch_app
 assert_clean_foreground
 adb exec-out screencap -p > "$output_dir/01-current-ui.png"
