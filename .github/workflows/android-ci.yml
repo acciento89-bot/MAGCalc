@@ -9,17 +9,23 @@ on:
       - 'android/**'
       - 'store/google-play/**'
       - 'scripts/export_play_icon.py'
+      - 'MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
       - '.github/workflows/android-ci.yml'
   pull_request:
     paths:
       - 'android/**'
       - 'store/google-play/**'
       - 'scripts/export_play_icon.py'
+      - 'MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
       - '.github/workflows/android-ci.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: magcalc-android-ci
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -37,8 +43,6 @@ jobs:
       - name: Install Android 16 SDK and icon validation tools
         run: |
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq inkscape
           python3 -m pip install --disable-pip-version-check -q pillow
       - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
@@ -61,10 +65,15 @@ jobs:
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'versionCode = 3' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.0.2"' android/app/build.gradle.kts
-          grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          test -f android/app/src/main/res/drawable/app_icon_source.xml
-          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          grep -Fq '@drawable/app_icon_source' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          IOS_ICON='MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+          ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
+          cmp -s "$IOS_ICON" "$ANDROID_ICON"
+          test ! -e android/app/src/main/res/drawable/app_icon_source.xml
+          test ! -e android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test ! -e android/app/src/main/res/values/launcher_colors.xml
+          test -z "$(find android/app/src/main/res -type f \( -iname '*adaptive*' -o -iname '*foreground*' -o -iname '*background*' \) -print -quit)"
           ! grep -Fq 'generateLauncherIcon' android/app/build.gradle.kts
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
