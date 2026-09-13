@@ -15,9 +15,19 @@ current_focus() {
 }
 
 dump_ui() {
-  adb shell uiautomator dump /sdcard/current-window.xml >/dev/null
-  adb pull /sdcard/current-window.xml "$ui_dump_path" >/dev/null
-  cat "$ui_dump_path"
+  local attempt
+  rm -f "$ui_dump_path"
+  for attempt in $(seq 1 10); do
+    adb shell rm -f /sdcard/current-window.xml
+    if adb shell uiautomator dump /sdcard/current-window.xml >/dev/null 2>&1 &&
+      adb pull /sdcard/current-window.xml "$ui_dump_path" >/dev/null 2>&1; then
+      cat "$ui_dump_path"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Timed out waiting for a readable UI hierarchy." >&2
+  return 1
 }
 
 assert_no_system_dialog() {
