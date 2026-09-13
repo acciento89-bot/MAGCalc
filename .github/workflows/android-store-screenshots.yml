@@ -33,6 +33,9 @@ jobs:
         with:
           gradle-version: "9.5.0"
 
+      - name: Enable KVM
+        run: sudo chmod 666 /dev/kvm
+
       - name: Build local debug APK
         run: gradle -p android --no-daemon assembleDebug --stacktrace
 
