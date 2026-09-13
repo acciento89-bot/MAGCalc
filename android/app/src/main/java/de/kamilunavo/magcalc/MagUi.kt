@@ -136,6 +136,7 @@ private fun AppBackground(content: @Composable () -> Unit) {
 private fun ScreenFrame(title: String, onBack: (() -> Unit)? = null, trailingLabel: String? = null, onTrailing: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
     Scaffold(
         containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
