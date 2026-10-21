@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries>
+        <package android:name="de.kamilunavo.magcalc" />
+    </queries>
+    <application android:label="Approved Calculator QA" android:allowBackup="false">
+        <activity android:name=".LocalShareCaptureActivity" android:label="QA local capture" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

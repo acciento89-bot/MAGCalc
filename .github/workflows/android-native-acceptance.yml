@@ -1,0 +1,58 @@
+name: MAGCalc native service workflow acceptance (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: magcalc-native-acceptance
+  cancel-in-progress: false
+jobs:
+  native-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Verify source-only acceptance guards
+        run: python3 -m unittest discover -s .github/native-acceptance/tests -v
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+      - name: Build own debug candidate and separate QA host
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .github/native-acceptance/proof
+          git rev-parse HEAD > .github/native-acceptance/proof/source-commit.txt
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          gradle -p android --no-daemon --max-workers=1 testDebugUnitTest assembleDebug --stacktrace 2>&1 | tee .github/native-acceptance/proof/product-build.log
+          gradle -p .github/native-acceptance/host --no-daemon --max-workers=1 :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace 2>&1 | tee .github/native-acceptance/proof/host-build.log
+      - name: Enable official emulator KVM
+        run: test -e /dev/kvm && sudo chmod 666 /dev/kvm
+      - name: Actual MAGCalc native workflow on stock Google APIs image
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          avd-name: MAGNativeAcceptanceApi35
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -memory 2048
+          disable-animations: true
+          script: bash .github/native-acceptance/run-cloud.sh
+      - name: Retain native success or failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAGCalc-native-service-acceptance-${{ github.sha }}-${{ github.run_attempt }}
+          path: .github/native-acceptance/proof/
+          if-no-files-found: warn
+          retention-days: 14
