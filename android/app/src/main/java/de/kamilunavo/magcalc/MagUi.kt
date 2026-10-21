@@ -347,6 +347,9 @@ private fun FeatureRow(symbol: Symbol, text: String) {
 @Composable
 private fun SettingsScreen(copy: Copy, billing: BillingManager, onDone: () -> Unit, onUnlock: () -> Unit) {
     val context = LocalContext.current
+    val appVersion = remember(context) {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: "—"
+    }
     ScreenFrame(copy.text("Einstellungen", "Settings"), trailingLabel = copy.done, onTrailing = onDone) {
         SettingsSection {
             SettingsRow(copy.text("Pro-Status", "Pro status"), if (billing.isPro) copy.text("Aktiv", "Active") else "Free", billing.isPro)
@@ -359,7 +362,7 @@ private fun SettingsScreen(copy: Copy, billing: BillingManager, onDone: () -> Un
             SettingsButton(copy.text("Datenschutz", "Privacy")) { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://kamilunavo.com/magcalc/privacy"))) }
         }
         SectionLabel(copy.text("Über MAGCalc", "About MAGCalc"))
-        SettingsSection { SettingsRow(copy.text("Version", "Version"), "1.0.2"); SettingsRow(copy.text("Entwickler", "Developer"), "Kamilunavo") }
+        SettingsSection { SettingsRow(copy.text("Version", "Version"), appVersion); SettingsRow(copy.text("Entwickler", "Developer"), "Kamilunavo") }
         FormulaNote(copy.text("MAGCalc ersetzt keine fachgerechte Planung, Herstellerunterlagen oder die Prüfung nach den für die Anlage geltenden Regeln.", "MAGCalc does not replace professional design, manufacturer documentation or checks required by the rules applicable to the system."))
         billing.statusMessage?.let { Text(it, color = Error, style = MaterialTheme.typography.bodySmall) }
     }
