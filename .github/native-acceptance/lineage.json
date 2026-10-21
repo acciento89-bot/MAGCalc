@@ -1,0 +1,11 @@
+{
+  "source": "/Volumes/SSK SSD/Kamilunavo/Artifacts/StoreOptimization-20261020/ApprovedCalcAndroidQA/app/src/androidTest/java/de/kamilunavo/approvedcalcqa/ApprovedCalcNativeTest.java",
+  "source_sha256": "a61e0d261bdc75dc7b1d4d9afe72adde64454da0e905ff0262e06cf922b750ea",
+  "method": "magProjectAlternativeBaselineRotationColdReloadAndRealShare",
+  "method_sha256": "e8cc7a40397c88b3223894a93d0b64724905a38be49cc5a2ff403edb618ad2ca",
+  "method_body_unchanged": true,
+  "helpers": "All helpers verbatim. Other two app tests and constants removed; API35 cloud guard only. No product changes.",
+  "receiver_sha256": "e2b147101a45ffb233a6b728fb7f7774301e81da0781cb16b09c4af0a5d49a86",
+  "productMain": "495133ebc11d3031afb41ebbbc15e594dba7a416",
+  "transactions": false
+}

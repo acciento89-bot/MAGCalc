@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+proof/
+host/.gradle/
+host/local.properties
+host/**/build/
