@@ -7,7 +7,7 @@ on:
         required: true
         type: string
       source_artifact_id:
-        description: Immutable unsigned 1.1.0 (5) artifact from that run
+        description: Immutable unsigned 1.1.0 (6) artifact from that run
         required: true
         type: string
       source_artifact_digest:
@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 env:
   PACKAGE_NAME: de.kamilunavo.magcalc
-  VERSION_CODE: '5'
+  VERSION_CODE: '6'
   VERSION_NAME: 1.1.0
   BUNDLETOOL_URL: https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar
   BUNDLETOOL_SHA256: 378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584
@@ -30,7 +30,7 @@ env:
   SOURCE_RUN_ID: ${{ inputs.source_run_id }}
   SOURCE_COMMIT: ${{ github.sha }}
   SOURCE_ARTIFACT_ID: ${{ inputs.source_artifact_id }}
-  SOURCE_ARTIFACT_NAME: MAGCalc-1.1.0-5-unsigned-aab
+  SOURCE_ARTIFACT_NAME: MAGCalc-1.1.0-6-unsigned-aab
   SOURCE_ARTIFACT_DIGEST: ${{ inputs.source_artifact_digest }}
   SOURCE_AAB_BASENAME: app-release.aab
 jobs:
