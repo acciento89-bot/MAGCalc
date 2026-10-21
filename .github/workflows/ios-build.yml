@@ -11,6 +11,8 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Project rules and protected storage
+        run: bash scripts/test-projects.sh
       - name: Build MAGCalc
         run: |
           xcodebuild \
