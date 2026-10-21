@@ -42,5 +42,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("com.android.billingclient:billing-ktx:9.1.0")
     testImplementation("junit:junit:4.13.2")
+    // Android supplies org.json at runtime; JVM tests require its real implementation.
+    testImplementation("org.json:json:20240303")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

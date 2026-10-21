@@ -33,8 +33,8 @@
 - [ ] Save per-app ledger, metadata proposal and handoff; commit reviewed files without push.
 
 ### Task 3: Android one-to-one parity (renewed explicit human scope via root)
-- [ ] Write VesselProjectsTest.kt for known Swift-equivalent defaults, invalid inputs, baseline/duplicate/delete, DE/EN report and JSON corruption/migration protection.
-- [ ] Root executes serial Gradle testDebugUnitTest, observe missing Kotlin worksheet RED.
-- [ ] Implement Kotlin VesselProjects domain/archive/report using existing unchanged MAGCalculator; JVM org.json is test-only dependency.
-- [ ] Implement native Compose project/list/detail/editor with local atomic JSON, notes, baseline/delta, confirm deletion and text share; preserve original screens/IAP.
-- [ ] Root executes full Gradle tests + native debug build; record results and outstanding native parity acceptance.
+- [x] Write VesselProjectsTest.kt for known Swift-equivalent defaults, invalid inputs, baseline/duplicate/delete, DE/EN report and JSON corruption/migration protection.
+- [x] Root executes serial Gradle testDebugUnitTest, observe missing Kotlin worksheet RED.
+- [x] Implement Kotlin VesselProjects domain/archive/report using existing unchanged MAGCalculator; JVM org.json is test-only dependency.
+- [x] Implement native Compose project/list/detail/editor with local atomic JSON, notes, baseline/delta, confirm deletion and text share; preserve original screens/IAP.
+- [x] Root executes full Gradle tests + native debug build; record results and outstanding native parity acceptance.

@@ -80,7 +80,7 @@ private val MagTypography = Typography(
     labelLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 14.sp),
 )
 
-private enum class Screen { HOME, HEATING, PRESSURE, ADVANCED, SETTINGS, PAYWALL }
+private enum class Screen { HOME, HEATING, PRESSURE, ADVANCED, SETTINGS, PAYWALL, PROJECTS }
 private enum class Symbol { VESSEL, GAUGE, DROP, RULER, UP, PERCENT, CHECK, PLUS, WARNING, SPARKLES, SUN, SNOW, INFINITY }
 
 private class Copy(private val german: Boolean) {
@@ -115,9 +115,10 @@ internal fun MAGCalcApp(activity: Activity, billing: BillingManager) {
     MaterialTheme(colorScheme = MagColors, typography = MagTypography) {
         AppBackground {
             when (screen) {
-                Screen.HOME -> HomeScreen(copy, billing.isPro, { navigate(Screen.HEATING) }, { navigate(Screen.PRESSURE) }, { if (billing.isPro) navigate(Screen.ADVANCED) else openPaywall(Screen.HOME) }) { returnScreenName = Screen.HOME.name; navigate(Screen.SETTINGS) }
+                Screen.HOME -> HomeScreen(copy, billing.isPro, { navigate(Screen.HEATING) }, { navigate(Screen.PRESSURE) }, { if (billing.isPro) navigate(Screen.ADVANCED) else openPaywall(Screen.HOME) }, { navigate(Screen.PROJECTS) }) { returnScreenName = Screen.HOME.name; navigate(Screen.SETTINGS) }
                 Screen.HEATING -> HeatingScreen(copy) { navigate(Screen.HOME) }
                 Screen.PRESSURE -> PressureScreen(copy) { navigate(Screen.HOME) }
+                Screen.PROJECTS -> VesselProjectsScreen { navigate(Screen.HOME) }
                 Screen.ADVANCED -> if (billing.isPro) AdvancedScreen(copy) { navigate(Screen.HOME) }
                     else PaywallScreen(copy, activity, billing) { navigate(Screen.HOME) }
                 Screen.SETTINGS -> SettingsScreen(copy, billing, ::closeOverlay) { openPaywall(Screen.SETTINGS) }
@@ -154,7 +155,7 @@ private fun ScreenFrame(title: String, onBack: (() -> Unit)? = null, trailingLab
 }
 
 @Composable
-private fun HomeScreen(copy: Copy, isPro: Boolean, onHeating: () -> Unit, onPressure: () -> Unit, onAdvanced: () -> Unit, onSettings: () -> Unit) {
+private fun HomeScreen(copy: Copy, isPro: Boolean, onHeating: () -> Unit, onPressure: () -> Unit, onAdvanced: () -> Unit, onProjects: () -> Unit, onSettings: () -> Unit) {
     ScreenFrame("MAGCalc", trailingLabel = "⚙", onTrailing = onSettings) {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
@@ -168,6 +169,7 @@ private fun HomeScreen(copy: Copy, isPro: Boolean, onHeating: () -> Unit, onPres
         HomeCard(Symbol.VESSEL, copy.heating, copy.heatingSubtitle, "FREE", false, onHeating)
         HomeCard(Symbol.GAUGE, copy.pressure, copy.pressureSubtitle, "FREE", false, onPressure)
         HomeCard(Symbol.DROP, copy.advanced, copy.advancedSubtitle, "PRO", !isPro, onAdvanced)
+        HomeCard(Symbol.PLUS, copy.text("Gespeicherte Projekte", "Saved projects"), copy.text("Wasser-Szenarien speichern, Alternativen vergleichen und Protokolle teilen.", "Save water-sizing scenarios, compare alternatives and share records."), "FREE", false, onProjects)
         FormulaNote(copy.disclaimer)
     }
 }
