@@ -67,6 +67,14 @@ struct ContentView: View {
                             .buttonStyle(.plain)
                         }
 
+                        NavigationLink {
+                            ProjectsView()
+                        } label: {
+                            HomeCard(icon: "folder.fill", title: "projects.title",
+                                     subtitle: "projects.homeSubtitle", badge: "home.free.badge", locked: false)
+                        }
+                        .buttonStyle(.plain)
+
                         FormulaNote(text: "home.disclaimer")
                     }
                     .padding(18)
