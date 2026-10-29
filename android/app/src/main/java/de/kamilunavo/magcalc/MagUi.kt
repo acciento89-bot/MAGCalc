@@ -50,27 +50,32 @@ import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val BackgroundTop = Color(0xFF03090E)
-private val BackgroundBottom = Color(0xFF051316)
-private val Accent = Color(0xFF2ED1B3)
-private val Accent2 = Color(0xFF4DEBCC)
-private val TextPrimary = Color(0xFFF7FAFA)
-private val Muted = Color(0xFFA4ADAE)
-private val Line = Color(0xFF223033)
-private val Panel = Color(0xFF101D20)
-private val CardTop = Color(0xFF162326)
-private val CardBottom = Color(0xFF0B181B)
-private val Error = Color(0xFFFF7C7C)
+private val BackgroundTop = Color(0xFFEAF0F5)
+private val BackgroundBottom = Color(0xFFEAF0F5)
+private val Accent = Color(0xFF234F78)
+private val Accent2 = Color(0xFF345F83)
+private val TextPrimary = Color(0xFF142C43)
+private val Muted = Color(0xFF465F73)
+private val Line = Color(0xFFACBDCC)
+private val Panel = Color(0xFFFFFFFF)
+private val CardTop = Color(0xFFF4F7FA)
+private val CardBottom = Color(0xFFFFFFFF)
+private val Error = Color(0xFFA12D31)
 
-private val MagColors = darkColorScheme(
-    primary = Accent, onPrimary = Color(0xFF00251E), secondary = Accent2,
+private val MagColors = lightColorScheme(
+    primary = Accent, onPrimary = Color(0xFFFFFFFF), secondary = Accent2, onSecondary = Color.White,
     background = BackgroundTop, onBackground = TextPrimary, surface = Panel,
     onSurface = TextPrimary, surfaceVariant = CardTop, onSurfaceVariant = Muted,
     outline = Line, error = Error,
+    primaryContainer = CardTop, onPrimaryContainer = Accent,
+    secondaryContainer = CardTop, onSecondaryContainer = Accent,
+    surfaceContainerLowest = Panel, surfaceContainerLow = Panel,
+    surfaceContainer = Panel, surfaceContainerHigh = CardTop, surfaceContainerHighest = CardTop,
+
 )
 
 private val MagTypography = Typography(
-    displaySmall = TextStyle(fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 39.sp, letterSpacing = (-0.5).sp),
+    displaySmall = TextStyle( fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 39.sp, letterSpacing = (-0.5).sp),
     headlineMedium = TextStyle(fontWeight = FontWeight.Bold, fontSize = 30.sp, lineHeight = 35.sp),
     titleLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp, lineHeight = 25.sp),
     titleMedium = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 17.sp, lineHeight = 22.sp),
@@ -112,7 +117,7 @@ internal fun MAGCalcApp(activity: Activity, billing: BillingManager) {
         when (screen) { Screen.PAYWALL, Screen.SETTINGS -> closeOverlay(); else -> navigate(Screen.HOME) }
     }
 
-    MaterialTheme(colorScheme = MagColors, typography = MagTypography) {
+    MaterialTheme(colorScheme = MagColors, typography = productTypography(MagTypography)) {
         AppBackground {
             when (screen) {
                 Screen.HOME -> HomeScreen(copy, billing.isPro, { navigate(Screen.HEATING) }, { navigate(Screen.PRESSURE) }, { if (billing.isPro) navigate(Screen.ADVANCED) else openPaywall(Screen.HOME) }, { navigate(Screen.PROJECTS) }) { returnScreenName = Screen.HOME.name; navigate(Screen.SETTINGS) }
@@ -140,9 +145,9 @@ private fun ScreenFrame(title: String, onBack: (() -> Unit)? = null, trailingLab
         contentColor = MaterialTheme.colorScheme.onBackground,
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
-            Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)).heightIn(min = 56.dp).padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (onBack != null) RoundAction("‹", "Back", onBack) else Spacer(Modifier.size(48.dp))
-                Text(title, Modifier.weight(1f), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(title, Modifier.weight(1f), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleLarge, maxLines = 3)
                 if (trailingLabel != null && onTrailing != null) TextButton(onClick = onTrailing, modifier = Modifier.height(48.dp)) { Text(trailingLabel, fontWeight = FontWeight.Bold) }
                 else Spacer(Modifier.size(48.dp))
             }
@@ -157,36 +162,48 @@ private fun ScreenFrame(title: String, onBack: (() -> Unit)? = null, trailingLab
 @Composable
 private fun HomeScreen(copy: Copy, isPro: Boolean, onHeating: () -> Unit, onPressure: () -> Unit, onAdvanced: () -> Unit, onProjects: () -> Unit, onSettings: () -> Unit) {
     ScreenFrame("MAGCalc", trailingLabel = "⚙", onTrailing = onSettings) {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                ExpansionVesselIcon(66.dp, true)
-                Spacer(Modifier.weight(1f))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            ExpansionVesselIcon(58.dp, true)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(copy.text("BERECHNUNGSBLATT", "CALCULATION SHEET"), style = MaterialTheme.typography.labelLarge, color = Accent)
+                Text(copy.text("Gefäß · Druck · Ausdehnung", "Vessel · pressure · expansion"), style = MaterialTheme.typography.headlineMedium)
                 if (isPro) Badge("MAGCalc Pro", Accent)
             }
-            Text(copy.homeTitle, style = MaterialTheme.typography.displaySmall)
-            Text(copy.homeSubtitle, style = MaterialTheme.typography.bodyLarge, color = Muted)
         }
-        HomeCard(Symbol.VESSEL, copy.heating, copy.heatingSubtitle, "FREE", false, onHeating)
-        HomeCard(Symbol.GAUGE, copy.pressure, copy.pressureSubtitle, "FREE", false, onPressure)
-        HomeCard(Symbol.DROP, copy.advanced, copy.advancedSubtitle, "PRO", !isPro, onAdvanced)
-        HomeCard(Symbol.PLUS, copy.text("Gespeicherte Projekte", "Saved projects"), copy.text("Wasser-Szenarien speichern, Alternativen vergleichen und Protokolle teilen.", "Save water-sizing scenarios, compare alternatives and share records."), "FREE", false, onProjects)
+        HorizontalDivider(thickness = 2.dp, color = Accent)
+        SheetEntry("01", copy.heating, copy.heatingSubtitle, false, onHeating)
+        SheetEntry("02", copy.pressure, copy.pressureSubtitle, false, onPressure)
+        SheetEntry("03", copy.advanced, copy.advancedSubtitle, !isPro, onAdvanced)
+        Surface(onClick = onProjects, color = Accent, contentColor = Color.White, shape = RoundedCornerShape(2.dp)) {
+            Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(copy.text("Projektablage →", "Project records →"), style = MaterialTheme.typography.titleLarge)
+                Text(copy.text("Wasser-Szenarien · Variantenvergleich · Protokolle", "Water scenarios · alternatives · reports"), style = MaterialTheme.typography.bodyMedium)
+            }
+        }
         FormulaNote(copy.disclaimer)
     }
 }
 
 @Composable
-private fun HomeCard(symbol: Symbol, title: String, subtitle: String, badge: String, locked: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(22.dp)
-    Row(Modifier.fillMaxWidth().clip(shape).background(Brush.linearGradient(listOf(CardTop, CardBottom))).border(1.dp, Line, shape).clickable(role = Role.Button, onClick = onClick).padding(18.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (symbol == Symbol.VESSEL) ExpansionVesselIcon(48.dp) else SymbolTile(symbol)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f, fill = false))
-                Badge(badge, if (locked) Muted else Accent)
+private fun SheetEntry(number: String, title: String, subtitle: String, locked: Boolean, onClick: () -> Unit) {
+    Surface(onClick = onClick, color = Panel, shape = RoundedCornerShape(2.dp), border = BorderStroke(1.dp, Line)) {
+        Row(Modifier.fillMaxWidth().padding(18.dp), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Text(number, style = MaterialTheme.typography.headlineMedium, color = Accent)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(title, style = MaterialTheme.typography.titleLarge)
+                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = Muted)
+                if (locked) Badge("PRO", Accent)
             }
-            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = Muted)
+            Text("→", color = Accent, style = MaterialTheme.typography.titleLarge)
         }
-        Text(if (locked) "●" else "›", color = Muted, fontSize = if (locked) 12.sp else 29.sp)
+    }
+}
+
+@Composable
+private fun SheetSection(number: String, title: String, content: @Composable ColumnScope.() -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("$number  /  $title", style = MaterialTheme.typography.titleMedium, color = Accent)
+        InputCard(content)
     }
 }
 
@@ -196,12 +213,15 @@ private fun HeatingScreen(copy: Copy, onBack: () -> Unit) {
     var height by rememberSaveable { mutableStateOf("8") }; var valve by rememberSaveable { mutableStateOf("3") }
     val result = MAGCalculator.heating(volume.number(), temperature.number(), height.number(), valve.number())
     CalculatorFrame(copy.heating, copy.text("Schnelle Dimensionierung für Wasser als Anlagenmedium.", "Quick sizing for water as the system fluid."), onBack) {
-        InputCard {
+        SheetSection("01", copy.text("Wasserinhalt & Temperatur", "Water volume & temperature")) {
             NumberInputRow(copy.text("Anlagenvolumen", "System volume"), "l", volume) { volume = it }
             NumberInputRow(copy.text("Max. Temperatur", "Max. temperature"), "°C", temperature) { temperature = it }
+        }
+        SheetSection("02", copy.text("Druckfenster", "Pressure window")) {
             NumberInputRow(copy.text("Statische Höhe", "Static height"), "m", height) { height = it }
             NumberInputRow(copy.text("Sicherheitsventil", "Safety valve"), "bar", valve) { valve = it }
         }
+        Text(copy.text("03  /  Gefäß & Ausdehnung", "03  /  Vessel & expansion"), style = MaterialTheme.typography.titleMedium, color = Accent)
         if (result.isValid) {
             ResultCard(Symbol.CHECK, copy.text("Nächste Gefäßgröße", "Next vessel size"), fmt(result.recommendedLiters, 0), "l", true)
             ResultCard(Symbol.RULER, copy.text("Erforderliches Volumen", "Required volume"), fmt(result.requiredLiters), "l")
@@ -265,7 +285,7 @@ private fun CalculatorFrame(title: String, subtitle: String, onBack: () -> Unit,
 
 @Composable
 private fun InputCard(content: @Composable ColumnScope.() -> Unit) {
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = CardBottom), border = BorderStroke(1.dp, Line)) {
+    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(2.dp), colors = CardDefaults.cardColors(containerColor = CardBottom), border = BorderStroke(1.dp, Line)) {
         Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
     }
 }
@@ -273,26 +293,26 @@ private fun InputCard(content: @Composable ColumnScope.() -> Unit) {
 @Composable
 private fun NumberInputRow(label: String, unit: String, value: String, onValueChange: (String) -> Unit) {
     val focus = LocalFocusManager.current
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(label, style = MaterialTheme.typography.bodyLarge)
         OutlinedTextField(
             value = value,
             onValueChange = { next -> if (next.all { it.isDigit() || it == ',' || it == '.' || it == '-' }) onValueChange(next) },
-            modifier = Modifier.width(96.dp), singleLine = true,
-            textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End),
+            modifier = Modifier.fillMaxWidth(), singleLine = true,
+            suffix = { Text(unit, color = Muted) },
+            textStyle = MaterialTheme.typography.titleLarge,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focus.clearFocus() }), shape = RoundedCornerShape(10.dp),
-            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Accent, unfocusedBorderColor = Color.Transparent, focusedContainerColor = Color(0xFF071113), unfocusedContainerColor = Color(0xFF071113), cursorColor = Accent),
+            keyboardActions = KeyboardActions(onDone = { focus.clearFocus() }), shape = RoundedCornerShape(2.dp),
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Accent, unfocusedBorderColor = Line, focusedContainerColor = CardTop, unfocusedContainerColor = CardTop, cursorColor = Accent),
         )
-        Text(unit, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = Muted, modifier = Modifier.width(45.dp))
     }
 }
 
 @Composable
 private fun ResultCard(symbol: Symbol, title: String, value: String, unit: String, prominent: Boolean = false) {
-    val shape = RoundedCornerShape(18.dp)
+    val shape = RoundedCornerShape(2.dp)
     Row(
-        Modifier.fillMaxWidth().background(if (prominent) Color(0xFF102925) else Panel, shape)
+        Modifier.fillMaxWidth().background(if (prominent) Color(0xFFD8E5F0) else Panel, shape)
             .then(if (prominent) Modifier.border(1.dp, Accent.copy(alpha = .35f), shape) else Modifier).padding(16.dp),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -307,7 +327,7 @@ private fun ResultCard(symbol: Symbol, title: String, value: String, unit: Strin
 
 @Composable
 private fun FormulaNote(text: String, error: Boolean = false) {
-    Row(Modifier.fillMaxWidth().background(if (error) Error.copy(alpha = .07f) else Panel, RoundedCornerShape(16.dp)).padding(15.dp), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+    Row(Modifier.fillMaxWidth().background(if (error) Error.copy(alpha = .07f) else Panel, RoundedCornerShape(2.dp)).padding(15.dp), verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(9.dp)) {
         Text(if (error) "!" else "i", color = if (error) Error else Accent, fontWeight = FontWeight.Black)
         Text(text, style = MaterialTheme.typography.bodySmall, color = if (error) Error else Muted, modifier = Modifier.weight(1f))
     }
@@ -328,7 +348,7 @@ private fun PaywallScreen(copy: Copy, activity: Activity, billing: BillingManage
             FeatureRow(Symbol.SNOW, copy.text("Für Glykol mit Herstellerwerten nutzbar", "Usable for glycol with manufacturer data"))
             FeatureRow(Symbol.INFINITY, copy.text("Einmal kaufen, dauerhaft freigeschaltet", "One-time purchase, permanently unlocked"))
         }
-        Button(onClick = { billing.launchPurchase(activity) }, enabled = billing.billingReady, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp), colors = ButtonDefaults.buttonColors(containerColor = Accent, contentColor = Color(0xFF00251E), disabledContainerColor = Accent.copy(alpha = .35f))) {
+        Button(onClick = { billing.launchPurchase(activity) }, enabled = billing.billingReady, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp), colors = ButtonDefaults.buttonColors(containerColor = Accent, contentColor = Color(0xFFFFFFFF), disabledContainerColor = Accent.copy(alpha = .35f))) {
             Text(billing.productPrice ?: copy.text("Pro freischalten", "Unlock Pro"), fontWeight = FontWeight.Bold)
         }
         TextButton(onClick = billing::restorePurchases, modifier = Modifier.align(Alignment.CenterHorizontally)) { Text(copy.text("Käufe wiederherstellen", "Restore purchases"), fontWeight = FontWeight.SemiBold) }
@@ -339,7 +359,7 @@ private fun PaywallScreen(copy: Copy, activity: Activity, billing: BillingManage
 
 @Composable
 private fun FeatureRow(symbol: Symbol, text: String) {
-    Row(Modifier.fillMaxWidth().background(Panel, RoundedCornerShape(16.dp)).padding(15.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(13.dp)) {
+    Row(Modifier.fillMaxWidth().background(Panel, RoundedCornerShape(2.dp)).padding(15.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(13.dp)) {
         MiniSymbol(symbol, Modifier.size(30.dp)); Text(text, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge); Text("✓", color = Accent, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
 }
@@ -413,7 +433,7 @@ private fun ExpansionVesselIcon(iconSize: Dp, showsBadge: Boolean = false) {
             drawLine(Color.White.copy(alpha = .62f), Offset(w * .62f, h * .80f), Offset(w * .64f, h * .89f), w * .065f, StrokeCap.Round)
         }
         if (showsBadge) Box(Modifier.align(Alignment.TopEnd).size(iconSize * .30f).background(Brush.linearGradient(listOf(Accent, Accent2)), CircleShape), contentAlignment = Alignment.Center) {
-            MiniSymbol(Symbol.GAUGE, Modifier.fillMaxSize().padding(iconSize * .06f), Color(0xFF00342B))
+            MiniSymbol(Symbol.GAUGE, Modifier.fillMaxSize().padding(iconSize * .06f), Color(0xFFFFFFFF))
         }
     }
 }
