@@ -64,8 +64,8 @@ jobs:
           test -s "$AAB"
           grep -Fq 'applicationId = "de.kamilunavo.magcalc"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 5' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 7' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.2.0"' android/app/build.gradle.kts
           node scripts/generate_android_icons.cjs --verify
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
@@ -77,7 +77,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MAGCalc-1.1.0-5-unsigned-aab
+          name: MAGCalc-1.2.0-7-unsigned-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
