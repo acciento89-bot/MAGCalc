@@ -1,0 +1,12 @@
+{
+  "application": "MAGCalc",
+  "createdDate": "2026-10-29",
+  "authoringMethod": "Codex directly authored independent geometric SVG coordinates in the authorized portfolio task. No imagegen, stock asset, SF/Material symbol, old icon tracing or third-party artwork input.",
+  "master": "android/artwork/launcher.svg",
+  "masterSha256": "5e0debc30032c69b5e6f93668358c26f6a725956a103b60488ee19194dbdf3de",
+  "proposalSha256": "4fc876766030a20156d3b25ed9f3f0c152b387c832f15afa5df2f3c469f8503b",
+  "googlePlayDirectory": "store/google-play",
+  "platformScope": "Android only; iOS assets are preserved and are not generation inputs.",
+  "review": "Rendered and visually reviewed at512/64/48/32px in the task; actual rebuilt Android launcher review remains pending.",
+  "rightsStatement": "This documents the creation method and inputs; no CC0, third-party license, exclusivity or trademark clearance is claimed."
+}

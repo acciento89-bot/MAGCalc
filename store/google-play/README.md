@@ -1,7 +1,5 @@
-# MAGCalc Google Play identity
+# MAGCalc Google Play icon
 
-Use `icon-512.png` for **every** Google Play language and custom listing. The app name is **MAGCalc**.
+Use `icon-512.png` for every Google Play language/custom listing after the corresponding Android build passes icon and native QA. It is generated from the original project-authored `android/artwork/launcher.svg`; no Apple PNG is an input.
 
-This is a direct raster export of the existing Android red expansion-tank artwork, with its existing `launcher_background` color. It is not a new icon design. Google’s rejection evidence on 2026-09-11 shows this same red tank installed on the device; the previously uploaded blue Store symbol was a different image.
-
-Regenerate with `python3 scripts/export_play_icon.py`. Verify with `python3 scripts/export_play_icon.py --check` (Inkscape and Pillow required). The check compares the rendered pixels and source hashes. A future launcher change must update this Store asset and all Store languages together.
+Generate with `node scripts/generate_android_icons.cjs` (existing Sharp0.35.5); verify rendered bytes with `--check` or committed hash/resource bindings with `--verify` (Node only). See `android/artwork/ORIGIN.json` and `generation.json`. Actual Store images were not uploaded by this source change.

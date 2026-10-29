@@ -9,14 +9,14 @@ on:
       - 'android/**'
       - 'store/google-play/**'
       - 'scripts/export_play_icon.py'
-      - 'MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+      - 'scripts/generate_android_icons.cjs'
       - '.github/workflows/android-ci.yml'
   pull_request:
     paths:
       - 'android/**'
       - 'store/google-play/**'
       - 'scripts/export_play_icon.py'
-      - 'MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+      - 'scripts/generate_android_icons.cjs'
       - '.github/workflows/android-ci.yml'
   workflow_dispatch:
 
@@ -42,16 +42,15 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools'
-      - name: Install Android 16 SDK and icon validation tools
+      - name: Install Android 16 SDK
         run: |
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
-          python3 -m pip install --disable-pip-version-check -q pillow
       - name: Set up Gradle 9.5
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.0'
       - name: Verify Google Play icon is rendered from launcher source
-        run: python3 scripts/export_play_icon.py --check
+        run: node scripts/generate_android_icons.cjs --verify
       - name: Unit tests
         run: gradle -p android testDebugUnitTest --stacktrace
       - name: Build debug App Bundle
@@ -67,11 +66,9 @@ jobs:
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'versionCode = 5' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
-          IOS_ICON='MAGCalc/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
-          ANDROID_ICON='android/app/src/main/res/drawable-nodpi/ic_launcher.png'
+          node scripts/generate_android_icons.cjs --verify
           grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
-          cmp -s "$IOS_ICON" "$ANDROID_ICON"
           test ! -e android/app/src/main/res/drawable/app_icon_source.xml
           test ! -e android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           test ! -e android/app/src/main/res/values/launcher_colors.xml

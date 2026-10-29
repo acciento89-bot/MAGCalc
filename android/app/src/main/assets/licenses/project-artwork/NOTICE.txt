@@ -1,0 +1,14 @@
+MAGCalc Android geometric icon
+
+Created as original SVG coordinate code by Codex for this project on2026-10-29
+in the authorized portfolio task. No imagegen, stock artwork, SF/Material
+symbol paths, fonts or old icon trace were used as inputs.
+
+Editable source: android/artwork/launcher.svg
+Source SHA256: 5e0debc30032c69b5e6f93668358c26f6a725956a103b60488ee19194dbdf3de
+Creation record: android/artwork/ORIGIN.json
+Reproduction recipe: scripts/generate_android_icons.cjs (Sharp0.35.5)
+
+This is a creation/provenance notice, not a third-party license or a
+claim of exclusive rights, public-domain status or trademark clearance.
+Bundled fonts retain their separate original copyright and OFL files.
