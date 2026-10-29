@@ -114,3 +114,25 @@
 "projects.waterLimits" = "Water only, reference temperature 10 °C; maximum temperature 10–120 °C. Verify manufacturer limits and applicable requirements. This is a sizing aid, not an approval certificate.";
 "projects.invalid" = "Enter a name, positive system volume, 10–120 °C, nonnegative height and a safety pressure that leaves a valid pressure window.";
 "projects.preview" = "Recommended vessel preview";
+
+"selection.title" = "Document a vessel to compare";
+
+"selection.record" = "Record selected / existing vessel";
+
+"selection.capacity" = "Documented nominal capacity";
+
+"selection.designation" = "Manufacturer / model / designation";
+
+"selection.source" = "Source: nameplate / data sheet / date";
+
+"selection.required" = "Enter a positive nominal capacity, designation and traceable source.";
+
+"selection.margin" = "Selected minus calculated requirement";
+
+"selection.shortfall" = "Shortfall against this calculated value";
+
+"selection.below" = "Below this calculated requirement";
+
+"selection.atOrAbove" = "At or above this calculated value";
+
+"selection.limits" = "Comparison with this water calculation model, not safety or manufacturer approval. Verify operating limits and the actual installation separately.";

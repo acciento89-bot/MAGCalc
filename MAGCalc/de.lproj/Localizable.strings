@@ -114,3 +114,25 @@
 "projects.waterLimits" = "Nur Wasser, Referenztemperatur 10 °C; Maximaltemperatur 10–120 °C. Herstellergrenzen und geltende Anforderungen prüfen. Auslegungshilfe, keine Freigabebescheinigung.";
 "projects.invalid" = "Name, positives Anlagenvolumen, 10–120 °C, nichtnegative Höhe und einen Sicherheitsdruck mit gültigem Druckfenster eingeben.";
 "projects.preview" = "Vorschau der Gefäßempfehlung";
+
+"selection.title" = "Gefäß zum Vergleich dokumentieren";
+
+"selection.record" = "Ausgewähltes / vorhandenes Gefäß erfassen";
+
+"selection.capacity" = "Dokumentierter Nenninhalt";
+
+"selection.designation" = "Hersteller / Modell / Bezeichnung";
+
+"selection.source" = "Quelle: Typenschild / Datenblatt / Datum";
+
+"selection.required" = "Positiven Nenninhalt sowie Bezeichnung und nachvollziehbare Quelle eingeben.";
+
+"selection.margin" = "Auswahl minus berechneter Bedarf";
+
+"selection.shortfall" = "Fehlvolumen zu diesem Rechenwert";
+
+"selection.below" = "Unter diesem berechneten Bedarf";
+
+"selection.atOrAbove" = "Erreicht oder übersteigt diesen Rechenwert";
+
+"selection.limits" = "Vergleich mit diesem Wasser-Rechenmodell, keine Sicherheits- oder Herstellerfreigabe. Betriebsgrenzen und tatsächliche Ausführung gesondert prüfen.";

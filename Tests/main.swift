@@ -61,3 +61,44 @@ rejects("missing baseline rejected") { try VesselProjectArchive.save([malformed]
 malformed = project; malformed.scenarios.append(scenario)
 rejects("duplicate scenario IDs rejected") { try VesselProjectArchive.save([malformed], to: url) }
 print("ALL MAGCALC PROJECT TESTS PASSED")
+
+var selectedJSON = try JSONSerialization.jsonObject(with: JSONEncoder().encode(scenario)) as! [String: Any]
+selectedJSON["selectedVessel"] = ["nominalLiters": 20.0, "designation": "Maker M20", "source": "Nameplate A"]
+let selectedScenario = try JSONDecoder().decode(VesselScenario.self, from: JSONSerialization.data(withJSONObject: selectedJSON))
+let selectedRoundtrip = try JSONSerialization.jsonObject(with: JSONEncoder().encode(selectedScenario)) as! [String: Any]
+check(selectedRoundtrip["selectedVessel"] != nil, "documented selected vessel survives decoding and encoding")
+
+check(selectedScenario.isValid, "documented positive selection accepted")
+check(abs(selectedScenario.capacityComparison!.shortfallLiters - 7.096727721753434) < 1e-8, "20l selection compared with independently known water requirement")
+check(VesselCapacityComparison(requiredLiters: 25, selectedLiters: 25).shortfallLiters == 0, "equal capacity has no shortfall")
+check(VesselCapacityComparison(requiredLiters: 25, selectedLiters: 35).marginLiters == 10, "larger capacity has positive numerical margin")
+for capacity in [0.0, -1, Double.nan, Double.infinity] {
+    var bad = selectedScenario; bad.selectedVessel!.nominalLiters = capacity
+    check(!bad.isValid && bad.capacityComparison == nil, "invalid documented capacity rejected")
+}
+var noSource = selectedScenario; noSource.selectedVessel!.source = " "
+check(!noSource.isValid, "selection requires a traceable source")
+noSource = selectedScenario; noSource.selectedVessel!.designation = ""
+check(!noSource.isValid, "selection requires a designation")
+var selectedProject = VesselProject(name: "Vessel comparison", scenarios: [selectedScenario])
+let copiedSelection = selectedProject.duplicateScenario(id: selectedScenario.id)!
+selectedProject.scenarios[1].selectedVessel!.nominalLiters = 50
+check(selectedProject.scenarios[0].selectedVessel!.nominalLiters == 20 && copiedSelection.id != selectedScenario.id, "duplicate selection edits do not mutate baseline scenario")
+let selectedReport = VesselReport.text(project: selectedProject, german: false)
+check(selectedReport.contains("Maker M20") && selectedReport.contains("Nameplate A") && selectedReport.contains("Shortfall against this calculated value") && selectedReport.contains("Not a safety approval"), "report documents source and numerical scope without approval")
+check(VesselReport.text(project: selectedProject, german: true).contains("Keine Sicherheitsfreigabe"), "German comparison scope")
+try VesselProjectArchive.save([selectedProject], to: url)
+try check(VesselProjectArchive.load(from: url) == [selectedProject], "selection archive cold reload")
+var damaged = try JSONSerialization.jsonObject(with: JSONEncoder().encode([selectedProject])) as! [[String: Any]]
+var damagedScenarios = damaged[0]["scenarios"] as! [[String: Any]]
+var damagedSelection = damagedScenarios[0]["selectedVessel"] as! [String: Any]; damagedSelection["nominalLiters"] = 0
+damagedScenarios[0]["selectedVessel"] = damagedSelection; damaged[0]["scenarios"] = damagedScenarios
+let damagedBytes = try JSONSerialization.data(withJSONObject: damaged); try damagedBytes.write(to: url)
+rejects("invalid selected-capacity archive rejected") { _ = try VesselProjectArchive.load(from: url) }
+rejects("invalid selection archive protected") { try VesselProjectArchive.save([selectedProject], to: url) }
+try check(Data(contentsOf: url) == damagedBytes, "invalid selection bytes preserved")
+let oldProjectBytes = try JSONEncoder().encode([project]); try oldProjectBytes.write(to: url)
+try check(VesselProjectArchive.load(from: url)[0].scenarios[0].selectedVessel == nil, "legacy scenarios receive no fabricated selection")
+try JSONSerialization.data(withJSONObject: ["version": 1, "projects": try JSONSerialization.jsonObject(with: oldProjectBytes)]).write(to: url)
+try check(VesselProjectArchive.load(from: url) == [project], "old v1 envelope remains readable")
+print("PASS MAG selected vessel: capacity boundaries, documented provenance, isolated scenario edits, archive migration and scope")

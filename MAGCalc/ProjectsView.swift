@@ -141,6 +141,9 @@ private struct ScenarioComparison: View {
             metric("input.safetyValve", scenario.safetyValvePressure, "bar")
             metric("result.requiredVessel", scenario.result.requiredLiters, "l")
             metric("result.recommendedVessel", scenario.result.recommendedLiters, "l")
+            if let selected = scenario.selectedVessel, let comparison = scenario.capacityComparison {
+                VesselSelectionValues(selection: selected, comparison: comparison)
+            }
             if let baseline {
                 if dynamicTypeSize.isAccessibilitySize {
                     Text("projects.baseline").font(.headline)
@@ -201,6 +204,10 @@ private struct ScenarioEditor: View {
     @State private var temperature: String
     @State private var height: String
     @State private var valve: String
+    @State private var hasSelection: Bool
+    @State private var selectedCapacity: String
+    @State private var selectedDesignation: String
+    @State private var selectedSource: String
     @State private var failed = false
 
     init(scenario: VesselScenario, save: @escaping (VesselScenario) -> Bool) {
@@ -210,6 +217,10 @@ private struct ScenarioEditor: View {
         _temperature = State(initialValue: String(scenario.maximumTemperature))
         _height = State(initialValue: String(scenario.staticHeight))
         _valve = State(initialValue: String(scenario.safetyValvePressure))
+        _hasSelection = State(initialValue: scenario.selectedVessel != nil)
+        _selectedCapacity = State(initialValue: scenario.selectedVessel.map { String($0.nominalLiters) } ?? "")
+        _selectedDesignation = State(initialValue: scenario.selectedVessel?.designation ?? "")
+        _selectedSource = State(initialValue: scenario.selectedVessel?.source ?? "")
     }
     private var edited: VesselScenario {
         var updated = scenario
@@ -218,6 +229,8 @@ private struct ScenarioEditor: View {
         updated.maximumTemperature = VesselNumericInput.parse(temperature) ?? .nan
         updated.staticHeight = VesselNumericInput.parse(height) ?? .nan
         updated.safetyValvePressure = VesselNumericInput.parse(valve) ?? .nan
+        updated.selectedVessel = hasSelection ? VesselSelection(nominalLiters: VesselNumericInput.parse(selectedCapacity) ?? .nan,
+            designation: selectedDesignation.trimmingCharacters(in: .whitespacesAndNewlines), source: selectedSource.trimmingCharacters(in: .whitespacesAndNewlines)) : nil
         return updated
     }
     var body: some View {
@@ -230,6 +243,15 @@ private struct ScenarioEditor: View {
                     number("input.staticHeight", "m", $height)
                     number("input.safetyValve", "bar", $valve)
                 }
+                Section("selection.title") {
+                    Toggle("selection.record", isOn: $hasSelection)
+                    if hasSelection {
+                        number("selection.capacity", "l", $selectedCapacity)
+                        TextField("selection.designation", text: $selectedDesignation)
+                        TextField("selection.source", text: $selectedSource, axis: .vertical)
+                        Text("selection.required").font(.footnote)
+                    }
+                }
                 Section("projects.sourceNotes") { TextField("projects.sourceHint", text: $notes, axis: .vertical).lineLimit(3...8) }
                 Section { Text("projects.waterLimits").font(.footnote)
                     if !edited.isValid { Text("projects.invalid").foregroundStyle(.red) }
@@ -238,6 +260,9 @@ private struct ScenarioEditor: View {
                     Section("projects.preview") {
                         Text(edited.result.recommendedLiters.formatted(.number) + " l").font(.title2.bold())
                         Text("result.recommendedVessel").font(.caption)
+                        if let selected = edited.selectedVessel, let comparison = edited.capacityComparison {
+                            VesselSelectionValues(selection: selected, comparison: comparison)
+                        }
                     }
                 }
             }
@@ -264,5 +289,23 @@ private struct ScenarioEditor: View {
                 Text(unit).foregroundStyle(.secondary)
             }
         }.padding(.vertical, 4)
+    }
+}
+
+private struct VesselSelectionValues: View {
+    let selection: VesselSelection
+    let comparison: VesselCapacityComparison
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(selection.designation).font(.headline)
+            Text(selection.source).font(.footnote).foregroundStyle(.secondary)
+            LabeledContent("selection.capacity", value: selection.nominalLiters.formatted() + " l")
+            LabeledContent("selection.margin", value: comparison.marginLiters.formatted(.number.precision(.fractionLength(0...3)).sign(strategy: .always())) + " l")
+            if comparison.shortfallLiters > 0 {
+                LabeledContent("selection.shortfall", value: comparison.shortfallLiters.formatted(.number.precision(.fractionLength(0...3))) + " l")
+                Text("selection.below").foregroundStyle(.orange)
+            } else { Text("selection.atOrAbove") }
+            Text("selection.limits").font(.footnote).foregroundStyle(.secondary)
+        }
     }
 }

@@ -1,5 +1,24 @@
 import Foundation
 
+struct VesselSelection: Codable, Equatable {
+    var nominalLiters: Double
+    var designation: String
+    var source: String
+    var isValid: Bool {
+        nominalLiters.isFinite && nominalLiters > 0 &&
+        !designation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+}
+
+/// A numerical capacity comparison under this scenario's water model, not installation approval.
+struct VesselCapacityComparison: Equatable {
+    let requiredLiters: Double
+    let selectedLiters: Double
+    var marginLiters: Double { selectedLiters - requiredLiters }
+    var shortfallLiters: Double { max(0, -marginLiters) }
+}
+
 struct VesselScenario: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
@@ -8,17 +27,23 @@ struct VesselScenario: Identifiable, Codable, Equatable {
     var maximumTemperature = 80.0
     var staticHeight = 8.0
     var safetyValvePressure = 3.0
+    var selectedVessel: VesselSelection? = nil
 
     var result: MAGResult {
         MAGCalculator.heating(systemVolume: systemVolume, maximumTemperature: maximumTemperature,
                               staticHeight: staticHeight, safetyValvePressure: safetyValvePressure)
+    }
+    var capacityComparison: VesselCapacityComparison? {
+        guard isValid, let selectedVessel else { return nil }
+        return VesselCapacityComparison(requiredLiters: result.requiredLiters, selectedLiters: selectedVessel.nominalLiters)
     }
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         [systemVolume, maximumTemperature, staticHeight, safetyValvePressure].allSatisfy(\.isFinite) &&
         systemVolume > 0 && (10...120).contains(maximumTemperature) && staticHeight >= 0 &&
         safetyValvePressure > 0 && result.isValid &&
-        [result.requiredLiters, result.recommendedLiters, result.fillPressure].allSatisfy(\.isFinite)
+        [result.requiredLiters, result.recommendedLiters, result.fillPressure].allSatisfy(\.isFinite) &&
+        (selectedVessel?.isValid ?? true)
     }
 }
 
@@ -65,7 +90,7 @@ enum VesselProjectArchive {
         let decoder = JSONDecoder()
         let projects: [VesselProject]
         if let document = try? decoder.decode(Document.self, from: data) {
-            guard document.version == 1 else { throw VesselArchiveError.unsupportedVersion }
+            guard (1...2).contains(document.version) else { throw VesselArchiveError.unsupportedVersion }
             projects = document.projects
         } else {
             projects = try decoder.decode([VesselProject].self, from: data)
@@ -78,7 +103,7 @@ enum VesselProjectArchive {
         // Refuse to replace unreadable or newer documents, even after a failed initial load.
         _ = try load(from: url)
         let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        let data = try encoder.encode(Document(version: 1, projects: projects))
+        let data = try encoder.encode(Document(version: 2, projects: projects))
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try data.write(to: url, options: .atomic)
     }
@@ -115,6 +140,14 @@ enum VesselReport {
                       l("Static pressure", "Statischer Druck") + ": \(n(r.staticPressure)) bar",
                       l("Pre-charge / fill / final pressure", "Vordruck / Füll- / Enddruck") + ": \(n(r.prechargePressure)) / \(n(r.fillPressure)) / \(n(r.finalPressure)) bar",
                       l("Acceptance factor", "Aufnahmefaktor") + ": \(n(r.acceptanceFactor))"]
+            if let selected = scenario.selectedVessel, let comparison = scenario.capacityComparison {
+                lines += [l("Documented selected vessel", "Dokumentiertes ausgewähltes Gefäß") + ": " + selected.designation,
+                          l("Capacity source", "Kapazitätsquelle") + ": " + selected.source,
+                          l("Selected nominal capacity", "Ausgewählter Nenninhalt") + ": \(n(selected.nominalLiters)) l",
+                          l("Selected minus this calculated requirement", "Ausgewählter Nenninhalt minus berechneter Bedarf") + ": \(n(comparison.marginLiters)) l",
+                          l("Shortfall against this calculated value", "Fehlvolumen gegenüber diesem berechneten Wert") + ": \(n(comparison.shortfallLiters)) l",
+                          l("Capacity comparison for this scenario only. Not a safety approval; verify the actual vessel and manufacturer operating limits separately.", "Kapazitätsvergleich nur für dieses Szenario. Keine Sicherheitsfreigabe; tatsächliches Gefäß und Hersteller-Betriebsgrenzen gesondert prüfen.")]
+            }
             if let baseline = project.baseline {
                 lines.append(l("Difference from baseline (required / recommended)", "Differenz zur Referenz (erforderlich / empfohlen)") + ": \(n(r.requiredLiters - baseline.result.requiredLiters)) / \(n(r.recommendedLiters - baseline.result.recommendedLiters)) l")
             }
